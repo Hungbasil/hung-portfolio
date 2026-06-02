@@ -1,0 +1,42 @@
+'use server'
+
+import { Resend } from 'resend'
+import { env } from '@/env'
+import { ActionError, actionClient } from '@/lib/safe-action/client'
+import { botIdMiddleware } from '@/lib/safe-action/middleware'
+import { ContactSchema } from '@/lib/validators/contact'
+
+const resend = new Resend(env.RESEND_API_KEY)
+
+export const contact = actionClient
+  .use(botIdMiddleware)
+  .inputSchema(ContactSchema)
+  .action(async ({ parsedInput: { name, email, message } }) => {
+    try {
+      const { error } = await resend.emails.send({
+        from: env.EMAIL_FROM,
+        to: env.EMAIL_TO,
+        subject: `New contact form submission from ${name}`,
+        text: message,
+        replyTo: email,
+      })
+
+      if (error) {
+        console.error('Error sending contact email:', error)
+        throw new ActionError(`Failed to send contact email: ${error.message}`)
+      }
+
+      return {
+        success: true,
+        message: "Your message has been sent! We'll get back to you soon.",
+      }
+    } catch (error) {
+      console.error('Contact form error:', error)
+      if (error instanceof ActionError) {
+        throw error
+      }
+      throw new ActionError(
+        'Failed to send your message. Please try again later.'
+      )
+    }
+  })

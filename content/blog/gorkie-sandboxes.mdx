@@ -1,0 +1,249 @@
+---
+title: "How We Taught a Slack Bot to Run Code (Safely-ish)"
+description: How we evolved Gorkie from a simple Slack helper into a safe code-running assistant, migrating from Vercel Sandboxes to E2B and finally to a persistence-first Daytona runtime.
+date: 2026-02-25
+tags: ['ai', 'tech', 'infrastructure']
+image: /images/blog/first-post.png
+author: Anirudh & Devarsh
+---
+
+Gorkie was built by [Devarsh](https://github.com/imdevarsh). I led the sandbox and runtime work; Devarsh helped throughout with testing and feedback.
+
+## Intro
+
+Gorkie started as a Slack assistant: answer questions, summarize threads, help with tasks. That worked until users started asking it to *do* things: run scripts, convert files, poke at repos. Text responses stopped being enough. The bot needed to actually execute.
+
+That meant sandboxes. This post covers how we got there.
+
+<Mermaid
+  chart="flowchart LR
+  U[Slack user] --> G[Gorkie]
+  G --> A[Agent runtime]
+  A --> S[Sandbox]
+  S --> O[Commands / Files / Output]
+  O --> G --> U"
+/>
+
+Through every iteration, three things stayed constant:
+- Syncing attachments into the sandbox
+- Showing tool status so users see progress, not just "thinking..."
+- Streaming updates back to Slack instead of one giant final blob
+
+We also use **Slack's AI implementation** for the chat surface and interaction model, which lets us render interactive UI directly via [Block Kit](https://docs.slack.dev/reference/block-kit/blocks/plan-block/).
+
+## Sandbox Providers
+
+<Steps>
+<Step>
+
+### Vercel Sandboxes
+
+We were already on the [AI SDK](https://ai-sdk.dev/), so [Vercel Sandboxes](https://vercel.com/docs/vercel-sandbox/) were the obvious first step. We gave Gorkie a sandbox tool that spawned a **ToolLoopAgent** to work inside it.
+
+<Mermaid
+  chart="sequenceDiagram
+  participant G as Gorkie
+  participant A as Subagent
+  participant SB as Sandbox
+  participant S as Slack
+  G->>A: build task + context
+  A->>SB: create/attach sandbox
+  A->>SB: sync attachments
+  A->>SB: run commands
+  A-->>SB: write outputs
+  A->>S: upload files (showFile)
+  A-->>G: summary
+  G-->>G: final summary"
+/>
+
+Per-thread persistence was get-or-create with snapshot restore and Redis TTLs, a workaround that held things together before we had a proper DB model. On shutdown we'd snapshot and save the ID with its own TTL:
+
+```ts title="lib/ai/tools/execute-code/sandbox.ts"
+const live = await reconnect(ctxId);
+if (live) {
+  return live;
+}
+
+const restored = await restoreFromSnapshot(ctxId);
+const instance =
+  restored ??
+  (await Sandbox.create({
+    runtime: config.runtime,
+    timeout: config.timeoutMs,
+  }));
+
+await redis.set(redisKeys.sandbox(ctxId), instance.sandboxId);
+await redis.expire(redisKeys.sandbox(ctxId), config.sandboxTtlSeconds);
+```
+
+```ts title="lib/ai/tools/execute-code/sandbox.ts"
+const snap = await instance.snapshot().catch((error: unknown) => {
+  logger.warn({ sandboxId, error, ctxId }, 'Snapshot failed');
+  return null;
+});
+
+if (snap) {
+  await redis.set(redisKeys.snapshot(ctxId), snap.snapshotId);
+  await redis.expire(redisKeys.snapshot(ctxId), config.snapshotTtlSeconds);
+}
+```
+
+It worked for short runs, but the cracks showed quickly: limited lifecycle controls, unreliable snapshots, easy-to-hit limits. Not the foundation we wanted.
+
+</Step>
+<Step>
+
+### E2B
+
+We moved to **[E2B](https://e2b.dev/)**, built for AI agent execution, which felt like the right step up. Same architecture, just a better sandbox layer. We also made thread ownership explicit with a proper session table:
+
+```ts title="db/schema.ts"
+export const sandboxSessions = pgTable('sandbox_sessions', {
+  threadId: text('thread_id').primaryKey(),
+  sandboxId: text('sandbox_id').notNull(),
+  status: text('status').notNull().default('creating'),
+  pausedAt: timestamp('paused_at', { withTimezone: true }),
+  resumedAt: timestamp('resumed_at', { withTimezone: true }),
+  destroyedAt: timestamp('destroyed_at', { withTimezone: true }),
+});
+```
+
+As usage grew, we realized the provider wasn't the issue, our tool loop architecture was. It handled short tasks but fell apart under skills, MCP plumbing, orchestration, and stateful session handling. We were slowly building our own runtime by accident.
+
+E2B had its own friction too: persistence was beta and buggy, and the model leaned more toward "create and kill" than true long-lived sessions. We wanted persistence-first from the start.
+
+</Step>
+<Step>
+
+### Daytona
+
+We switched to **[Daytona](https://www.daytona.io/)**. Each Slack thread owns a runtime, and that runtime persists across messages. The state model is straightforward: `threadId → sandboxId + sessionId`, with status transitions (`active`, `paused`, `resuming`, `destroyed`) and automatic reattach on the next message in the thread.
+
+Daytona's lifecycle settings handled cleanup without us touching it:
+- Auto-stop after **5 minutes** of inactivity
+- Auto-archive **2 hours** after stop
+- Auto-delete after **2 days**
+
+```ts title="lib/sandbox/session.ts"
+const sandbox = await daytona.create({
+  autoStopInterval: config.timeouts.stopMinutes,
+  autoArchiveInterval: config.timeouts.archiveMinutes,
+  autoDeleteInterval: config.timeouts.deleteMinutes,
+  snapshot: SANDBOX_SNAPSHOT,
+});
+
+await upsert({
+  threadId,
+  sandboxId: sandbox.id,
+  sessionId: session.id,
+  status: 'active',
+});
+```
+
+No custom janitor jobs. Cleanup moved from our cron logic into platform config.
+
+<Mermaid
+  chart="flowchart LR
+  T[Slack Thread] --> D[Daytona Sandbox]
+  D -->|active| P[Persisted FS]
+  D -->|auto-stop 5 min| S[Stopped]
+  S -->|auto-archive 2 hours| A[Object Storage]
+  A -->|auto-delete 2 days| X[Deleted]"
+/>
+
+</Step>
+</Steps>
+
+With the sandbox stable, the next question was what should run inside it.
+
+## The Orchestration Trap
+
+We tried [Sandbox Agent](https://sandboxagent.dev/) by [Rivet](https://rivet.dev) with **[OpenCode](https://opencode.ai/)** behind it. Sandbox Agent runs inside the sandbox, exposes an HTTP interface, and communicates over [ACP](https://zed.dev/acp). We had to boot, health-check, and restart it when needed.
+
+<Mermaid
+  chart="sequenceDiagram
+  participant G as Gorkie
+  participant T as Sandbox Tool
+  participant SA as Sandbox Agent (HTTP Server in Sandbox)
+  participant O as OpenCode
+  G->>T: delegate task
+  T->>SA: start sandbox-agent server
+  SA-->>T: return HTTP URL
+  T->>SA: health check + connect
+  T->>SA: start task + stream
+  SA->>O: run agent
+  O-->>SA: prompts + commands
+  SA-->>T: live updates + results
+  T-->>G: final summary"
+/>
+
+It offloaded orchestration, but added too many failure points: an HTTP server inside the sandbox, more moving parts. OpenCode was also over-engineered for our use case and used more tokens than we wanted.
+
+We next tried **[Pi](https://pi.dev/)** with Sandbox Agent. Pi gave us skills, MCPs, and easy extensibility, but the core shape was still an HTTP server inside the sandbox. Crashes still happened. We wanted boring infrastructure.
+
+## Pi over RPC
+
+The cleanest setup turned out to be **Pi in RPC mode**: no daemon, no internal HTTP listener, just a process. Gorkie attaches to the thread's Daytona sandbox, starts Pi in RPC mode inside a PTY, and sends it a prompt. Pi runs commands and edits files; events stream back as newline-delimited JSON and get forwarded to Slack as they arrive.
+
+```ts title="lib/sandbox/rpc.ts"
+const piCmd = sessionId
+  ? `pi --mode rpc --session ${sessionId}`
+  : 'pi --mode rpc';
+
+await pty.sendInput(`stty -echo; exec ${piCmd}\n`);
+await client.waitUntilReady();
+```
+
+One less server, one less failure point.
+
+Pi also made tool integration cleaner. Before, with Sandbox Agent and OpenCode, we had to define a custom MCP server, run it in the sandbox, connect it to the coding agent, intercept the tool call, and route it. With Pi, we register handlers directly:
+
+```ts title="lib/sandbox/config/extensions/tools.ts"
+pi.registerTool({
+  name: 'showFile',
+  label: 'showFile',
+  description:
+    'Signal the host to upload a sandbox file to Slack once it is ready.',
+  parameters: showFileParams,
+  execute: (_toolCallId, params) => {
+    const { path, title } = params as Static<typeof showFileParams>;
+    if (!nodePath.isAbsolute(path)) {
+      throw new Error('showFile.path must be absolute');
+    }
+    return Promise.resolve({
+      content: [{ type: 'text' as const, text: `Queued upload for ${path}` }],
+      details: { path, title: title ?? null },
+    });
+  },
+});
+```
+
+## Current Architecture
+
+<Mermaid
+  chart="sequenceDiagram
+  participant U as Slack User
+  participant G as Gorkie
+  participant D as Daytona Sandbox
+  participant P as Pi (RPC)
+  U->>G: request in thread
+  G->>D: create/attach thread runtime
+  G->>P: start/resume pi rpc session
+  P->>D: run commands + edit files
+  P-->>G: structured events/output
+  G-->>U: stream updates + final result"
+/>
+
+## Demo
+
+<VideoPlayer
+  className="max-w-[360px]"
+  aspectRatio="9/16"
+  src="https://vimeo.com/1168112844"
+/>
+
+Vercel recently launched a [Chat SDK](https://sdk.vercel.ai/docs/ai-sdk-ui/overview) that supports multiple runtimes. We might rewrite Gorkie on top of it.
+
+## Code
+
+<GithubRepo repo={{ owner: 'imdevarsh', repo: 'gorkie-slack', branch: 'feat/refactor-pi' }} />
