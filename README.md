@@ -1,7 +1,4 @@
 <div align="center">
-  <img alt="Hưng Nguyễn - Full Stack Developer portfolio" src="./.github/cover.png#gh-light-mode-only" />
-  <img alt="Hưng Nguyễn - Full Stack Developer portfolio" src="./.github/cover-dark.png#gh-dark-mode-only" />
-
   <h1>Hưng's Portfolio</h1>
 
   <p>

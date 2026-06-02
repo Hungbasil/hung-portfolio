@@ -50,21 +50,7 @@ export const technologies = [
     icon: t('react_light.svg', 'react_dark.svg'),
     href: 'https://react.dev',
   },
-  {
-    label: 'Next.js',
-    icon: s('nextjs_icon_dark.svg'),
-    href: 'https://nextjs.org',
-  },
-  {
-    label: 'Tailwind CSS',
-    icon: s('tailwindcss.svg'),
-    href: 'https://tailwindcss.com',
-  },
-  {
-    label: 'shadcn/ui',
-    icon: t('shadcn-ui.svg', 'shadcn-ui_dark.svg'),
-    href: 'https://ui.shadcn.com',
-  },
+
   { label: 'Node.js', icon: s('nodejs.svg'), href: 'https://nodejs.org' },
   { label: 'Express', icon: s('express.svg'), href: 'https://expressjs.com' },
   {

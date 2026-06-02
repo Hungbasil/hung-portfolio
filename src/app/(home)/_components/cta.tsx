@@ -26,8 +26,7 @@ export default function CTA(): React.ReactElement {
             whileInView={{ opacity: 1, translateY: 0 }}
           >
             <p className='typography-body text-pretty text-center text-muted-foreground sm:text-xl'>
-              Have questions or want to connect? Reach out through the contact
-              form or find me on social platforms.
+              Have questions or want to connect? Hit the button below to get in touch!
             </p>
           </ViewAnimation>
           <div className='flex flex-col gap-4 sm:flex-row sm:items-center'>
@@ -38,7 +37,7 @@ export default function CTA(): React.ReactElement {
             >
               <Button asChild className='gap-4' size='lg'>
                 <Link href='/contact'>
-                  Contact Me{' '}
+                  Contact{' '}
                   <Icons.arrowRight className='icon-arrow-button size-4' />
                 </Link>
               </Button>

@@ -100,7 +100,7 @@ const Testimonials = ({ testimonials }: TestimonialsProps) => {
           align='left'
           className='px-6'
           description="I've had the pleasure of working with some amazing people. Here is what they have to say about my work."
-          title='What others are saying'
+          title='What others say about me'
         />
 
         <ViewAnimation

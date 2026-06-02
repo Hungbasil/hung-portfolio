@@ -53,7 +53,7 @@ const Hero = () => {
             'md:text-5xl'
           )}
         >
-          Hi! I'm Anirudh!
+          Welcome to my Portfolio!
         </h1>
       </ViewAnimation>
       <ViewAnimation
@@ -62,8 +62,9 @@ const Hero = () => {
         whileInView={{ opacity: 1, translateY: 0 }}
       >
         <p className='max-w-sm text-pretty text-center text-base text-muted-foreground leading-relaxed tracking-tight sm:max-w-xl sm:text-lg md:text-xl'>
-          I'm a design engineer and full-stack developer who blends design and
-          development to build beautiful, functional websites.
+          My name is Hưng. I'm a software engineering student in Ho Chi Minh
+          City, passionate about full-stack programming and high-performance
+          application development.
         </p>
       </ViewAnimation>
 

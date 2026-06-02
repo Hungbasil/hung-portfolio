@@ -1,6 +1,7 @@
 'use client'
 
 import { cva } from 'class-variance-authority'
+import * as motion from 'motion/react-client'
 import Image from 'next/image'
 import { Section } from '@/components/section'
 import { SectionHeader } from '@/components/sections/section-header'
@@ -59,56 +60,66 @@ const Skills = () => (
         </div>
 
         <ViewAnimation
-          className='divider-top-dashed px-6 py-6'
+          className='divider-top-dashed overflow-hidden px-6 py-6'
           initial={{ opacity: 0, translateY: -6 }}
           whileInView={{ opacity: 1, translateY: 0 }}
         >
-          <div className='flex flex-wrap gap-2'>
-            {technologies.map(({ label, icon, href }) => (
-              <Badge
-                asChild
-                className='gap-2 rounded-md px-3 py-1 text-xs transition-transform will-change-transform hover:-rotate-4 hover:scale-105 sm:text-sm'
-                key={label}
-                variant='outline'
-              >
-                <a href={href} rel='noopener noreferrer' target='_blank'>
-                  {typeof icon === 'string' ? (
-                    <Image
-                      alt=''
-                      aria-hidden
-                      className='size-4'
-                      height={16}
-                      src={icon}
-                      unoptimized
-                      width={16}
-                    />
-                  ) : (
-                    <>
+          <motion.div
+            animate={{ x: [-100, -2000] }}
+            className='flex w-max gap-2'
+            transition={{
+              duration: 30,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: 'linear',
+            }}
+          >
+            {[...technologies, ...technologies].map(
+              ({ label, icon, href }, idx) => (
+                <Badge
+                  asChild
+                  className='flex-shrink-0 gap-2 rounded-md px-3 py-1 text-xs transition-transform will-change-transform hover:-rotate-4 hover:scale-105 sm:text-sm'
+                  key={`${label}-${idx}`}
+                  variant='outline'
+                >
+                  <a href={href} rel='noopener noreferrer' target='_blank'>
+                    {typeof icon === 'string' ? (
                       <Image
                         alt=''
                         aria-hidden
-                        className='size-4 dark:hidden'
+                        className='size-4'
                         height={16}
-                        src={icon.light}
+                        src={icon}
                         unoptimized
                         width={16}
                       />
-                      <Image
-                        alt=''
-                        aria-hidden
-                        className='hidden size-4 dark:block'
-                        height={16}
-                        src={icon.dark}
-                        unoptimized
-                        width={16}
-                      />
-                    </>
-                  )}
-                  {label}
-                </a>
-              </Badge>
-            ))}
-          </div>
+                    ) : (
+                      <>
+                        <Image
+                          alt=''
+                          aria-hidden
+                          className='size-4 dark:hidden'
+                          height={16}
+                          src={icon.light}
+                          unoptimized
+                          width={16}
+                        />
+                        <Image
+                          alt=''
+                          aria-hidden
+                          className='hidden size-4 dark:block'
+                          height={16}
+                          src={icon.dark}
+                          unoptimized
+                          width={16}
+                        />
+                      </>
+                    )}
+                    {label}
+                  </a>
+                </Badge>
+              )
+            )}
+          </motion.div>
         </ViewAnimation>
       </div>
     </div>
