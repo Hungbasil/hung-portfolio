@@ -23,7 +23,7 @@ const HAND_BASE_CLASSES =
   'absolute left-1/2 top-1/2 rounded-full bg-neutral-600 dark:bg-neutral-400'
 const HAND_ORIGIN = { transformOrigin: '0px 0px' }
 const FORMATTER = new Intl.DateTimeFormat('en-US', {
-  timeZone: 'Asia/Kolkata',
+  timeZone: 'Asia/Ho_Chi_Minh',
   hour: '2-digit',
   minute: '2-digit',
   second: '2-digit',

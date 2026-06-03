@@ -32,6 +32,10 @@ export function createMetadata(override: Metadata): Metadata {
     ...override,
     creator: owner,
     publisher: owner,
+    icons: {
+      icon: '/images/profile.jpg',
+      apple: '/images/profile.jpg',
+    },
     formatDetection: {
       telephone: false,
       ...override.formatDetection,
@@ -50,7 +54,7 @@ export function createMetadata(override: Metadata): Metadata {
     },
     twitter: {
       card: 'summary_large_image',
-      creator: '@AnirudhWith',
+      creator: '@Hungbasic',
       title: override.title ?? undefined,
       description: override.description ?? undefined,
       images: defaultImage,

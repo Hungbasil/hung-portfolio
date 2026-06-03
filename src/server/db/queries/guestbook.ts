@@ -8,9 +8,9 @@ import { guestbookEntries, guestbookReactions, users } from '@/server/db/schema'
 const fetchGuestbookEntries = async (
   currentUserId?: string | null
 ): Promise<GuestbookEntryItem[]> => {
-  const rows = await db
+  // Fetch entries first
+  const entries = await db
     .select({
-      // Entry info
       id: guestbookEntries.id,
       name: guestbookEntries.name,
       message: guestbookEntries.message,
@@ -20,64 +20,52 @@ const fetchGuestbookEntries = async (
       banned: users.banned,
       createdAt: guestbookEntries.createdAt,
       editedAt: guestbookEntries.editedAt,
-      // Reactions
-      emoji: guestbookReactions.emoji,
-      count: sql<number>`count(${guestbookReactions.emoji})`.mapWith(Number),
-      reacted: currentUserId
-        ? sql<boolean>`coalesce(bool_or(${guestbookReactions.userId} = ${currentUserId}), false)`
-        : sql<boolean>`false`,
     })
     .from(guestbookEntries)
     .innerJoin(users, eq(users.id, guestbookEntries.userId))
-    .leftJoin(
-      guestbookReactions,
-      eq(guestbookReactions.entryId, guestbookEntries.id)
-    )
-    .groupBy(
-      guestbookEntries.id,
-      guestbookEntries.name,
-      guestbookEntries.message,
-      guestbookEntries.signature,
-      guestbookEntries.userId,
-      users.role,
-      users.banned,
-      guestbookEntries.createdAt,
-      guestbookEntries.editedAt,
-      guestbookReactions.emoji
-    )
     .orderBy(desc(guestbookEntries.createdAt))
 
-  const entriesMap = new Map()
-
-  for (const row of rows) {
-    if (!entriesMap.has(row.id)) {
-      entriesMap.set(row.id, {
-        id: row.id,
-        name: row.name,
-        message: row.message,
-        signature: row.signature ?? null,
-        userId: row.userId,
-        role: row.role,
-        banned: row.banned ?? false,
-        createdAt: row.createdAt,
-        editedAt: row.editedAt,
-        reactions: [],
-      })
-    }
-
-    if (row.emoji) {
-      entriesMap.get(row.id)!.reactions.push({
-        emoji: row.emoji,
-        count: row.count,
-        reacted: row.reacted,
-      })
-    }
+  if (entries.length === 0) {
+    return []
   }
 
-  return [...entriesMap.values()].map((entry) => ({
-    ...entry,
+  // Fetch all reactions
+  const allReactions = await db
+    .select({
+      entryId: guestbookReactions.entryId,
+      emoji: guestbookReactions.emoji,
+      count: sql<number>`count(*)`.mapWith(Number),
+      reacted: currentUserId
+        ? sql<boolean>`max(case when ${guestbookReactions.userId} = ${currentUserId} then true else false end)`
+        : sql<boolean>`false`,
+    })
+    .from(guestbookReactions)
+    .groupBy(guestbookReactions.entryId, guestbookReactions.emoji)
+
+  // Group reactions by entry ID
+  const reactionsMap = new Map<number, typeof allReactions>()
+  for (const reaction of allReactions) {
+    if (!reactionsMap.has(reaction.entryId)) {
+      reactionsMap.set(reaction.entryId, [])
+    }
+    reactionsMap.get(reaction.entryId)!.push(reaction)
+  }
+
+  return entries.map((entry) => ({
+    id: entry.id,
+    name: entry.name,
+    message: entry.message,
+    signature: entry.signature ?? null,
+    userId: entry.userId,
+    role: entry.role,
+    banned: entry.banned ?? false,
     createdAt: entry.createdAt.toISOString(),
     editedAt: entry.editedAt?.toISOString() ?? null,
+    reactions: (reactionsMap.get(entry.id) || []).map((r) => ({
+      emoji: r.emoji,
+      count: r.count,
+      reacted: r.reacted,
+    })),
   }))
 }
 
