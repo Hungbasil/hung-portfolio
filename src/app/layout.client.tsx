@@ -14,6 +14,7 @@ export function Body({
   return (
     <body
       className={cn(mode, 'relative flex min-h-svh flex-col overflow-x-hidden')}
+      suppressHydrationWarning
     >
       {children}
     </body>

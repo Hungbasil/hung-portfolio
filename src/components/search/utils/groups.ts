@@ -5,16 +5,13 @@ import { commands } from '@/constants/search'
 import type { SearchPageGroup, SearchTagGroup } from '@/types/search/results'
 
 function tagFromUrl(url: string): string {
-  if (url === '/blog' || url.startsWith('/blog/')) {
-    return 'blog'
-  }
   if (url === '/work' || url.startsWith('/work/')) {
     return 'projects'
   }
   return 'other'
 }
 
-const TAG_ORDER = ['blog', 'projects']
+const TAG_ORDER = ['projects']
 
 function orderTagGroups(
   tagMap: Map<string, SearchPageGroup[]>

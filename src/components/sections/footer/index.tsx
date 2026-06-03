@@ -9,8 +9,8 @@ import { Links } from './links'
 export const Footer = () => (
   <footer
     className={cn(
-      'container mx-auto flex flex-col gap-6 px-4 py-6 pb-24',
-      'border-border border-b border-dashed',
+      'container mx-auto flex flex-col gap-8 px-4 py-8 pb-24',
+      'border-border border-t border-dashed',
       'sm:gap-16 sm:px-8 sm:py-16'
     )}
   >
@@ -19,7 +19,7 @@ export const Footer = () => (
       <ViewAnimation
         className='hidden w-min sm:flex'
         delay={0.1}
-        initial={{ opacity: 0, translateY: -6 }}
+        initial={{ opacity: 0, translateY: 8 }}
         whileInView={{ opacity: 1, translateY: 0 }}
       >
         <UserButton />
@@ -27,18 +27,18 @@ export const Footer = () => (
       <div className='flex items-center justify-center'>
         <ViewAnimation
           delay={0.15}
-          initial={{ opacity: 0, translateY: -6 }}
+          initial={{ opacity: 0, translateY: 8 }}
           whileInView={{ opacity: 1, translateY: 0 }}
         >
-          <p className='whitespace-nowrap text-muted-foreground text-sm'>
+          <p className='whitespace-nowrap text-muted-foreground text-xs tracking-tight sm:text-sm'>
             &copy; {new Date().getFullYear()} {owner}. All rights reserved.
           </p>
         </ViewAnimation>
       </div>
       <ViewAnimation
-        className='hidden items-center gap-2 sm:flex sm:justify-end'
+        className='hidden items-center justify-end gap-3 sm:flex'
         delay={0.2}
-        initial={{ opacity: 0, translateY: -6 }}
+        initial={{ opacity: 0, translateY: 8 }}
         whileInView={{ opacity: 1, translateY: 0 }}
       >
         <Clock />
@@ -48,7 +48,7 @@ export const Footer = () => (
         <ViewAnimation
           className='w-min'
           delay={0.1}
-          initial={{ opacity: 0, translateY: -6 }}
+          initial={{ opacity: 0, translateY: 8 }}
           whileInView={{ opacity: 1, translateY: 0 }}
         >
           <UserButton />
@@ -56,7 +56,7 @@ export const Footer = () => (
         <ViewAnimation
           className='flex items-center gap-2'
           delay={0.2}
-          initial={{ opacity: 0, translateY: -6 }}
+          initial={{ opacity: 0, translateY: 8 }}
           whileInView={{ opacity: 1, translateY: 0 }}
         >
           <Clock />

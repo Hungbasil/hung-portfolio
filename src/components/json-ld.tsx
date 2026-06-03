@@ -1,13 +1,7 @@
-import type {
-  Article,
-  BlogPosting,
-  BreadcrumbList,
-  CollectionPage,
-} from 'schema-dts'
+import type { Article, BreadcrumbList } from 'schema-dts'
 import { baseUrl } from '@/constants'
 import { title as homeTitle } from '@/constants/site'
-import { getBlogPageImage, getWorkPageImage } from '@/lib/metadata'
-import type { BlogPage } from '@/lib/source'
+import { getWorkPageImage } from '@/lib/metadata'
 import type { WorkPage } from '@/lib/source/work'
 
 const personRef = {
@@ -43,40 +37,6 @@ function makeBreadcrumbs(
 
 function makeGraph(...nodes: object[]) {
   return { '@context': 'https://schema.org', '@graph': nodes }
-}
-
-// --- Blog post ---
-
-export const PostJsonLd = ({ page }: { page: BlogPage }) => {
-  const url = new URL(page.url, baseUrl.href).href
-  const image = new URL(getBlogPageImage(page).url, baseUrl.href).href
-
-  const post: BlogPosting = {
-    '@type': 'BlogPosting',
-    '@id': `${url}#article`,
-    headline: page.data.title,
-    description: page.data.description,
-    image,
-    url,
-    datePublished: new Date(page.data.date).toISOString(),
-    dateModified: page.data.lastModified
-      ? new Date(page.data.lastModified).toISOString()
-      : new Date(page.data.date).toISOString(),
-    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
-    author: page.data.author
-      ? { '@type': 'Person', name: page.data.author }
-      : personRef,
-    publisher: personRef,
-    isPartOf: { '@type': 'WebSite', '@id': `${baseUrl.href}#website` },
-  }
-
-  const breadcrumbs = makeBreadcrumbs([
-    { name: homeTitle, url: baseUrl.href },
-    { name: 'Blog', url: new URL('/blog', baseUrl.href).href },
-    { name: page.data.title ?? 'Untitled', url },
-  ])
-
-  return <JsonLd graph={makeGraph(post, breadcrumbs)} />
 }
 
 // --- Work case study ---
@@ -192,26 +152,3 @@ export const ProfilePageJsonLd = (props: PageJsonLdProps) => (
     type='ProfilePage'
   />
 )
-
-// --- Blog tag page ---
-
-export const TagJsonLd = ({ tag }: { tag: string }) => {
-  const tagUrl = new URL(`/blog/tags/${tag}`, baseUrl.href).href
-  const tagsUrl = new URL('/blog/tags', baseUrl.href).href
-
-  const page: CollectionPage = {
-    '@type': 'CollectionPage',
-    '@id': `${tagUrl}#webpage`,
-    name: `Posts tagged "${tag}"`,
-    url: tagUrl,
-    isPartOf: { '@type': 'WebSite', '@id': `${baseUrl.href}#website` },
-  }
-
-  const breadcrumbs = makeBreadcrumbs([
-    { name: homeTitle, url: baseUrl.href },
-    { name: 'Tags', url: tagsUrl },
-    { name: `Posts tagged "${tag}"`, url: tagUrl },
-  ])
-
-  return <JsonLd graph={makeGraph(page, breadcrumbs)} />
-}

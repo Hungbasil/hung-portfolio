@@ -17,7 +17,7 @@ export default function Experience(): React.ReactElement {
     <SplitSection cols='three'>
       <SplitSectionSidebar background='dashed'>
         <SplitSectionHeader
-          description='A quick timeline of the roles shaping my work.'
+          description='Here is my  resume and a quick look at my work experience'
           sticky
           title='Experience'
         >

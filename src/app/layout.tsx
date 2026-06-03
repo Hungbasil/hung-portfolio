@@ -1,7 +1,7 @@
-import { BotIdClient } from 'botid/client'
 import { RootProvider } from 'fumadocs-ui/provider/next'
 import type { Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+import Script from 'next/script'
 import type { ReactNode } from 'react'
 import CustomSearchDialog from '@/components/search'
 import { ThemeProvider } from '@/components/theme-provider'
@@ -10,10 +10,11 @@ import { socials } from '@/constants/navigation'
 import { description as homeDescription, owner, title } from '@/constants/site'
 import { PagesProvider } from '@/contexts/pages'
 import { createMetadata } from '@/lib/metadata'
-import { getPosts, getWorkPages } from '@/lib/source'
+import { getWorkPages } from '@/lib/source'
 import '@/styles/globals.css'
 import 'fumadocs-ui/components/image-zoom2.css'
 import 'katex/dist/katex.css'
+import { BotId } from './botid-wrapper'
 import { Body } from './layout.client'
 import { Provider } from './provider'
 
@@ -84,12 +85,6 @@ const jsonLd = {
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
   const pages = [
-    ...getPosts().map((page) => ({
-      title: page.data.title ?? 'Untitled',
-      url: page.url,
-      tag: 'blog' as const,
-      description: page.data.description,
-    })),
     ...getWorkPages().map((page) => ({
       title: page.data.title ?? 'Untitled',
       url: page.url,
@@ -105,23 +100,16 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
       suppressHydrationWarning
     >
       <head>
-        <BotIdClient
-          protect={[
-            {
-              path: '/*',
-              method: 'POST',
-            },
-          ]}
-        />
-      </head>
-      <Body>
-        <script
+        <BotId />
+        <Script
           // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD requires raw script
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
           }}
           type='application/ld+json'
         />
+      </head>
+      <Body>
         <PagesProvider pages={pages}>
           <ThemeProvider
             attribute='class'

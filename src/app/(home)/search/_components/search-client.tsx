@@ -52,9 +52,6 @@ const getItemTag = (url: string) => {
   if (url.startsWith('/work')) {
     return 'work'
   }
-  if (url.startsWith('/blog')) {
-    return 'blog'
-  }
   return 'page'
 }
 

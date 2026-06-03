@@ -33,7 +33,7 @@ export const commands: CommandGroup[] = [
       {
         kind: 'page',
         title: 'Blog',
-        url: '/blog',
+
         icon: <Icons.blog className='size-4' />,
       },
       {

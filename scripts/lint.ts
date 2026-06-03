@@ -4,12 +4,7 @@ import {
   scanURLs,
   validateFiles,
 } from 'next-validate-link'
-import {
-  type BlogPage,
-  getPosts,
-  getWorkPages,
-  type WorkPage,
-} from '@/lib/source'
+import { getPosts, getWorkPages, type WorkPage } from '@/lib/source'
 
 async function checkLinks() {
   const posts = getPosts()
@@ -17,14 +12,6 @@ async function checkLinks() {
 
   const scanned = await scanURLs({
     populate: {
-      '(home)/(blog)/blog/[slug]': await Promise.all(
-        posts.map((page) => ({
-          value: {
-            slug: page.slugs[0] ?? '',
-          },
-          hashes: getHeadings(page),
-        }))
-      ),
       '(home)/work/[slug]': await Promise.all(
         workPages.map((page) => ({
           value: {

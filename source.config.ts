@@ -11,35 +11,6 @@ import type { ElementContent } from 'hast'
 import type { ShikiTransformer } from 'shiki'
 import { z } from 'zod'
 
-export const blog = defineCollections({
-  type: 'doc',
-  dir: 'content/blog',
-  schema: frontmatterSchema.extend({
-    date: z
-      .string()
-      .or(z.date())
-      .transform((value, context) => {
-        try {
-          return new Date(value)
-        } catch {
-          context.issues.push({
-            code: 'custom',
-            message: 'The value could not be transformed to Date type.',
-            input: value,
-          })
-          return z.NEVER
-        }
-      }),
-    author: z.string(),
-    tags: z.array(z.string()).optional(),
-    image: z.string().optional(),
-  }),
-  postprocess: {
-    includeProcessedMarkdown: true,
-    extractLinkReferences: true,
-  },
-})
-
 export const work = defineCollections({
   type: 'doc',
   dir: 'content/work',

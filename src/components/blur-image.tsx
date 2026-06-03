@@ -26,7 +26,7 @@ const BlurImage = (props: ImageProps) => {
           isLoading && 'scale-[1.02] blur-xl grayscale',
           imageClassName
         )}
-        loading={lazy ? 'lazy' : undefined}
+        loading={lazy ? 'lazy' : 'eager'}
         onLoad={() => setIsLoading(false)}
         priority={!lazy}
         quality={100}

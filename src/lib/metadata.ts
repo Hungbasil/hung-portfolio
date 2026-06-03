@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { owner, title } from '@/constants/site'
 import { env } from '@/env'
-import type { BlogPage } from './source/blog'
 import type { WorkPage } from './source/work'
 
 export const baseUrl =
@@ -64,14 +63,6 @@ export function createMetadata(override: Metadata): Metadata {
       },
       ...override.alternates,
     },
-  }
-}
-
-export function getBlogPageImage(page: BlogPage) {
-  const segments = [...page.slugs, 'image.webp']
-  return {
-    segments,
-    url: `/og/blog/${segments.join('/')}`,
   }
 }
 

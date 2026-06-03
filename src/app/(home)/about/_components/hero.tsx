@@ -5,7 +5,7 @@ export default function Hero(): React.ReactElement {
   return (
     <HeroSection
       align='center'
-      description="I'm Anirudh (techwithanirudh), a design engineer and full-stack developer who builds beautiful, functional websites."
+      description="Hi, I'm Hưng, a software engineer specializing in building exceptional digital experiences. With a passion for crafting clean and efficient code, I create innovative solutions that solve real-world problems. Welcome to my portfolio!"
       title='About'
       variant='default'
     />

@@ -69,16 +69,8 @@ async function createNextConfig(): Promise<NextConfig> {
     async rewrites() {
       return [
         {
-          source: '/blog/:path*.mdx',
-          destination: '/blog.mdx/:path*',
-        },
-        {
           source: '/work/:path*.mdx',
           destination: '/work.mdx/:path*',
-        },
-        {
-          source: '/rss.xml',
-          destination: '/blog/rss.xml',
         },
       ]
     },

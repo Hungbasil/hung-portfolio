@@ -9,13 +9,13 @@ import {
   CarouselItem,
 } from '@/components/ui/carousel'
 import { ViewAnimation } from '@/components/view-animation'
-import type { BlogPage } from '@/lib/source'
+import type { WorkPage } from '@/lib/source'
 import { UpdateCard } from './update-card'
 
-const Updates = ({ posts }: { posts: BlogPage[] }) => (
+const Updates = ({ posts }: { posts: WorkPage[] }) => (
   <Section className='relative w-full pt-10'>
     <div className='flex flex-col gap-10'>
-      <SectionHeader align='left' className='px-6' title='Blog' />
+      <SectionHeader align='left' className='px-6' title='Work' />
 
       <div className='divider-top-dashed'>
         <Carousel className='w-full'>
@@ -33,12 +33,12 @@ const Updates = ({ posts }: { posts: BlogPage[] }) => (
                     whileInView={{ opacity: 1, translateY: 0 }}
                   >
                     <UpdateCard
-                      author={post.data.author}
+                      author='You'
                       date={date}
                       description={post.data.description ?? ''}
                       image={post.data.image}
                       slugs={post.slugs}
-                      tags={post.data.tags}
+                      tags={[]}
                       title={post.data.title}
                       url={post.url}
                     />
@@ -61,7 +61,7 @@ const Updates = ({ posts }: { posts: BlogPage[] }) => (
               variant: 'default',
               className: 'w-full py-8 active:scale-none active:opacity-80',
             })}
-            href='/blog'
+            href='/work'
           >
             View More
             <Icons.arrowRight className='icon-arrow-button size-5' />
