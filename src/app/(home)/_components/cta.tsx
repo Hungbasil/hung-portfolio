@@ -15,7 +15,7 @@ export default function CTA(): React.ReactElement {
           whileInView={{ opacity: 1, translateY: 0 }}
         >
           <h2 className='typography-title text-balance text-center font-regular text-3xl tracking-tighter sm:text-5xl'>
-            Let's Collaborate
+            Let's Work Together!
           </h2>
         </ViewAnimation>
 
@@ -26,7 +26,8 @@ export default function CTA(): React.ReactElement {
             whileInView={{ opacity: 1, translateY: 0 }}
           >
             <p className='typography-body text-pretty text-center text-muted-foreground sm:text-xl'>
-              Have questions or want to connect? Hit the button below to get in touch!
+              Have questions or want to connect? Hit the button below to get in
+              touch!
             </p>
           </ViewAnimation>
           <div className='flex flex-col gap-4 sm:flex-row sm:items-center'>

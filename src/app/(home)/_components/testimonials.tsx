@@ -93,13 +93,56 @@ const Testimonials = ({ testimonials }: TestimonialsProps) => {
     return () => clearTimeout(timer)
   }, [api, current])
 
+  // Show CTA when no testimonials available
+  if (testimonials.length === 0) {
+    return (
+      <Section className='relative w-full pt-10'>
+        <div className='flex flex-col gap-10'>
+          <SectionHeader
+            align='left'
+            className='px-6'
+            description=''
+            title="Let's work together"
+          />
+          <ViewAnimation
+            blur={false}
+            initial={{ opacity: 0, translateY: 16 }}
+            whileInView={{ opacity: 1, translateY: 0 }}
+          >
+            <div className='flex items-center justify-center rounded-lg border border-border border-dashed px-6 py-16 sm:py-24'>
+              <div className='flex flex-col items-center gap-4 text-center'>
+                <Icons.featured className='size-10 text-muted-foreground' />
+                <div>
+                  <h3 className='mb-2 font-semibold text-lg tracking-tight'>
+                    Open to opportunities
+                  </h3>
+                  <p className='text-base text-muted-foreground'>
+                    Interested in collaborating? Let's build something amazing
+                    together.
+                  </p>
+                </div>
+                <a
+                  className='mt-4 inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground text-sm transition-colors hover:bg-primary/90'
+                  href='#contact'
+                >
+                  Get in touch
+                  <Icons.arrowRight className='size-4' />
+                </a>
+              </div>
+            </div>
+          </ViewAnimation>
+        </div>
+      </Section>
+    )
+  }
+
   return (
     <Section className='relative w-full pt-10'>
       <div className='flex flex-col gap-10'>
         <SectionHeader
           align='left'
           className='px-6'
-          description="I've had the pleasure of working with some amazing people. Here is what they have to say about my work."
+          description=''
           title='What others say about me'
         />
 
