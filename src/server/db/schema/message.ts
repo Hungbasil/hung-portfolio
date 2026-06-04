@@ -12,7 +12,7 @@ import { users } from './auth'
 
 const createTable = pgTableCreator((name) => `portfolio_${name}`)
 
-export const guestbookEntries = createTable('guestbook_entries', {
+export const messageEntries = createTable('message_entries', {
   id: serial('id').primaryKey().notNull(),
   userId: text('user_id')
     .notNull()
@@ -26,12 +26,12 @@ export const guestbookEntries = createTable('guestbook_entries', {
     .notNull(),
 })
 
-export const guestbookReactions = createTable(
-  'guestbook_reactions',
+export const messageReactions = createTable(
+  'message_reactions',
   {
     entryId: integer('entry_id')
       .notNull()
-      .references(() => guestbookEntries.id, { onDelete: 'cascade' }),
+      .references(() => messageEntries.id, { onDelete: 'cascade' }),
     userId: text('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
@@ -42,6 +42,6 @@ export const guestbookReactions = createTable(
   },
   (table) => [
     primaryKey({ columns: [table.entryId, table.userId, table.emoji] }),
-    index('guestbook_reaction_entry_idx').on(table.entryId),
+    index('message_reaction_entry_idx').on(table.entryId),
   ]
 )

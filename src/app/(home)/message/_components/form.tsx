@@ -26,10 +26,10 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import { getLoginUrl, useSession } from '@/lib/auth-client'
 import { toast } from '@/lib/toast'
-import { GuestbookEntrySchema } from '@/lib/validators'
-import { createGuestbookEntry } from '../actions/guestbook'
+import { MessageEntrySchema } from '@/lib/validators'
+import { createMessageEntry } from '../actions/message'
 
-export const GuestbookForm = () => {
+export const MessageForm = () => {
   const router = useRouter()
   const { data: session, isPending } = useSession()
   const user = session?.user
@@ -38,12 +38,12 @@ export const GuestbookForm = () => {
   const signaturePad = useRef<SignaturePadHandle>(null)
 
   const { form, action, handleSubmitWithAction } = useHookFormAction(
-    createGuestbookEntry,
-    zodResolver(GuestbookEntrySchema),
+    createMessageEntry,
+    zodResolver(MessageEntrySchema),
     {
       actionProps: {
         onSuccess: () => {
-          toast.success('Guestbook entry posted.')
+          toast.success('Message posted.')
           form.reset({
             message: '',
             signature: undefined,
@@ -60,7 +60,7 @@ export const GuestbookForm = () => {
           toast.error(
             typeof error.serverError === 'string'
               ? error.serverError
-              : 'Failed to post guestbook entry.'
+              : 'Failed to post message.'
           )
         },
       },
@@ -102,7 +102,7 @@ export const GuestbookForm = () => {
           <Label>Message</Label>
           <div className='flex h-40 items-center justify-center rounded-md border border-input bg-background px-4 text-center'>
             <p className='text-muted-foreground text-sm'>
-              Sign in to leave a guestbook message.
+              Sign in to leave a message.
             </p>
           </div>
           <p className='text-muted-foreground text-sm'>
@@ -110,7 +110,7 @@ export const GuestbookForm = () => {
           </p>
         </div>
         <Button asChild className='w-full'>
-          <Link href={getLoginUrl('/guestbook')}>
+          <Link href={getLoginUrl('/message')}>
             <span>Sign in to post</span>
             <Icons.arrowRight
               className='icon-arrow-button size-4'
@@ -207,7 +207,7 @@ export const GuestbookForm = () => {
             <Alert className='mt-6 border-emerald-500/15 bg-emerald-500/15 p-3 px-3 py-2 text-emerald-500 has-[>svg]:gap-x-1.5'>
               <Icons.success size={16} />
               <AlertTitle className='mb-0 leading-normal'>
-                Thanks for signing the guestbook!
+                Thanks for your message!
               </AlertTitle>
             </Alert>
           )}

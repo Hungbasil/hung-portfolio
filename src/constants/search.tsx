@@ -20,8 +20,8 @@ export const commands: CommandGroup[] = [
       },
       {
         kind: 'page',
-        title: 'Guestbook',
-        url: '/guestbook',
+        title: 'Message',
+        url: '/message',
         icon: <Icons.messageSquare className='size-4' />,
       },
       {
@@ -32,21 +32,9 @@ export const commands: CommandGroup[] = [
       },
       {
         kind: 'page',
-        title: 'Blog',
-
-        icon: <Icons.blog className='size-4' />,
-      },
-      {
-        kind: 'page',
         title: 'Uses',
         url: '/uses',
         icon: <Icons.wrench className='size-4' />,
-      },
-      {
-        kind: 'page',
-        title: 'Colophon',
-        url: '/colophon',
-        icon: <Icons.post className='size-4' />,
       },
     ],
   },

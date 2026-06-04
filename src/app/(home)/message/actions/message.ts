@@ -9,35 +9,35 @@ import { ActionError, actionClient } from '@/lib/safe-action/client'
 import type { ActionContext } from '@/lib/safe-action/middleware'
 import { botIdMiddleware, userMiddleware } from '@/lib/safe-action/middleware'
 import {
-  type GuestbookBanUser,
-  GuestbookBanUserSchema,
-  type GuestbookDelete,
-  GuestbookDeleteSchema,
-  type GuestbookEdit,
-  GuestbookEditSchema,
-  type GuestbookEntry,
-  GuestbookEntrySchema,
-  type GuestbookReaction,
-  GuestbookReactionSchema,
+  type MessageBanUser,
+  MessageBanUserSchema,
+  type MessageDelete,
+  MessageDeleteSchema,
+  type MessageEdit,
+  MessageEditSchema,
+  type MessageEntry,
+  MessageEntrySchema,
+  type MessageReaction,
+  MessageReactionSchema,
 } from '@/lib/validators'
 import { auth } from '@/server/auth'
 import { db } from '@/server/db'
-import { deleteGuestbookEntry } from '@/server/db/queries/guestbook'
-import { guestbookEntries, guestbookReactions, users } from '@/server/db/schema'
+import { deleteMessageEntry } from '@/server/db/queries/message'
+import { messageEntries, messageReactions, users } from '@/server/db/schema'
 import { moderateEntry } from './utils/moderation'
 
-const protectedGuestbookAction = actionClient
+const protectedMessageAction = actionClient
   .use(botIdMiddleware)
   .use(userMiddleware)
 
-export const createGuestbookEntry = protectedGuestbookAction
-  .inputSchema(GuestbookEntrySchema)
+export const createMessageEntry = protectedMessageAction
+  .inputSchema(MessageEntrySchema)
   .action(
     async ({
       parsedInput,
       ctx,
     }: {
-      parsedInput: GuestbookEntry
+      parsedInput: MessageEntry
       ctx: ActionContext
     }) => {
       const { user } = ctx
@@ -67,7 +67,7 @@ export const createGuestbookEntry = protectedGuestbookAction
       if (parsedSignature) {
         const buffer = Buffer.from(parsedSignature.data, 'base64')
         const blob = await put(
-          `guestbook/signatures/${user.id}-${Date.now()}.png`,
+          `messages/signatures/${user.id}-${Date.now()}.png`,
           buffer,
           {
             access: 'public',
@@ -78,47 +78,47 @@ export const createGuestbookEntry = protectedGuestbookAction
         signatureUrl = blob.url
       }
 
-      await db.insert(guestbookEntries).values({
+      await db.insert(messageEntries).values({
         userId: user.id,
         name,
         message: parsedInput.message,
         signature: signatureUrl,
       })
 
-      revalidatePath('/guestbook')
-      updateTag('guestbook')
+      revalidatePath('/message')
+      updateTag('message')
 
       return { success: true }
     }
   )
 
-export const toggleGuestbookReaction = protectedGuestbookAction
-  .inputSchema(GuestbookReactionSchema)
+export const toggleMessageReaction = protectedMessageAction
+  .inputSchema(MessageReactionSchema)
   .action(
     async ({
       parsedInput,
       ctx,
     }: {
-      parsedInput: GuestbookReaction
+      parsedInput: MessageReaction
       ctx: ActionContext
     }) => {
       const { user } = ctx
       const { entryId, emoji } = parsedInput
 
       const deleted = await db
-        .delete(guestbookReactions)
+        .delete(messageReactions)
         .where(
           and(
-            eq(guestbookReactions.entryId, entryId),
-            eq(guestbookReactions.userId, user.id),
-            eq(guestbookReactions.emoji, emoji)
+            eq(messageReactions.entryId, entryId),
+            eq(messageReactions.userId, user.id),
+            eq(messageReactions.emoji, emoji)
           )
         )
-        .returning({ entryId: guestbookReactions.entryId })
+        .returning({ entryId: messageReactions.entryId })
 
       if (deleted.length === 0) {
         await db
-          .insert(guestbookReactions)
+          .insert(messageReactions)
           .values({
             entryId,
             userId: user.id,
@@ -127,21 +127,21 @@ export const toggleGuestbookReaction = protectedGuestbookAction
           .onConflictDoNothing()
       }
 
-      revalidatePath('/guestbook')
-      updateTag('guestbook')
+      revalidatePath('/message')
+      updateTag('message')
 
       return { success: true }
     }
   )
 
-export const editGuestbookEntry = protectedGuestbookAction
-  .inputSchema(GuestbookEditSchema)
+export const editMessageEntry = protectedMessageAction
+  .inputSchema(MessageEditSchema)
   .action(
     async ({
       parsedInput,
       ctx,
     }: {
-      parsedInput: GuestbookEdit
+      parsedInput: MessageEdit
       ctx: ActionContext
     }) => {
       const { user } = ctx
@@ -157,45 +157,45 @@ export const editGuestbookEntry = protectedGuestbookAction
       }
 
       const updated = await db
-        .update(guestbookEntries)
+        .update(messageEntries)
         .set({
           message: parsedInput.message,
           editedAt: new Date(),
         })
         .where(
           isAdmin
-            ? eq(guestbookEntries.id, parsedInput.entryId)
+            ? eq(messageEntries.id, parsedInput.entryId)
             : and(
-                eq(guestbookEntries.id, parsedInput.entryId),
-                eq(guestbookEntries.userId, user.id)
+                eq(messageEntries.id, parsedInput.entryId),
+                eq(messageEntries.userId, user.id)
               )
         )
-        .returning({ id: guestbookEntries.id })
+        .returning({ id: messageEntries.id })
 
       if (updated.length === 0) {
         throw new ActionError('Unable to edit this message.')
       }
 
-      revalidatePath('/guestbook')
-      updateTag('guestbook')
+      revalidatePath('/message')
+      updateTag('message')
 
       return { success: true }
     }
   )
 
-export const removeGuestbookEntry = protectedGuestbookAction
-  .inputSchema(GuestbookDeleteSchema)
+export const removeMessageEntry = protectedMessageAction
+  .inputSchema(MessageDeleteSchema)
   .action(
     async ({
       parsedInput,
       ctx,
     }: {
-      parsedInput: GuestbookDelete
+      parsedInput: MessageDelete
       ctx: ActionContext
     }) => {
       const { user } = ctx
       const isAdmin = user.role === 'admin'
-      const removed = await deleteGuestbookEntry(
+      const removed = await deleteMessageEntry(
         parsedInput.entryId,
         user.id,
         isAdmin
@@ -209,7 +209,7 @@ export const removeGuestbookEntry = protectedGuestbookAction
         try {
           await del(removed.signature)
         } catch (error) {
-          console.error('Failed to delete guestbook signature blob:', {
+          console.error('Failed to delete message signature blob:', {
             entryId: parsedInput.entryId,
             signature: removed.signature,
             error:
@@ -220,21 +220,21 @@ export const removeGuestbookEntry = protectedGuestbookAction
         }
       }
 
-      revalidatePath('/guestbook')
-      updateTag('guestbook')
+      revalidatePath('/message')
+      updateTag('message')
 
       return { success: true }
     }
   )
 
-export const banGuestbookUser = protectedGuestbookAction
-  .inputSchema(GuestbookBanUserSchema)
+export const banMessageUser = protectedMessageAction
+  .inputSchema(MessageBanUserSchema)
   .action(
     async ({
       parsedInput,
       ctx,
     }: {
-      parsedInput: GuestbookBanUser
+      parsedInput: MessageBanUser
       ctx: ActionContext
     }) => {
       const { user } = ctx
@@ -273,7 +273,7 @@ export const banGuestbookUser = protectedGuestbookAction
         await auth.api.banUser({
           body: {
             userId: parsedInput.userId,
-            banReason: 'Banned by an admin from the guestbook.',
+            banReason: 'Banned by an admin from the message board.',
           },
           headers: await headers(),
         })
@@ -290,8 +290,8 @@ export const banGuestbookUser = protectedGuestbookAction
         })
       }
 
-      revalidatePath('/guestbook')
-      updateTag('guestbook')
+      revalidatePath('/message')
+      updateTag('message')
 
       return { success: true }
     }

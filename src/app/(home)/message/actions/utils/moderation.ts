@@ -4,18 +4,18 @@ import { provider } from '@/lib/ai/providers'
 import type { Base64FileParts } from '@/lib/files'
 import { ModerationResultSchema } from '@/lib/validators'
 
-export interface ModerateGuestbookEntryInput {
+export interface ModerateMessageEntryInput {
   message: string
   signature?: Base64FileParts
 }
 
-export const moderateEntry = async (input: ModerateGuestbookEntryInput) => {
+export const moderateEntry = async (input: ModerateMessageEntryInput) => {
   const { message, signature } = input
 
   const userContent: UserContent = [
     {
       type: 'text',
-      text: `Moderate this guestbook entry:\n\nMessage:\n${message}. If a signature image is included, also moderate the content of the signature.`,
+      text: `Moderate this message entry:\n\nMessage:\n${message}. If a signature image is included, also moderate the content of the signature.`,
     },
   ]
 
@@ -44,7 +44,7 @@ export const moderateEntry = async (input: ModerateGuestbookEntryInput) => {
 
     return output
   } catch (error) {
-    console.error('Guestbook moderation failed:', {
+    console.error('Message moderation failed:', {
       error:
         error instanceof Error
           ? { name: error.name, message: error.message }

@@ -12,16 +12,16 @@ import { ViewAnimation } from '@/components/view-animation'
 import { Wrapper } from '@/components/wrapper'
 import { createMetadata } from '@/lib/metadata'
 import { getSession } from '@/server/auth'
-import { getGuestbookEntries } from '@/server/db/queries/guestbook'
-import { GuestbookEntries } from './_components/entries'
-import { GuestbookForm } from './_components/form'
-import { GuestbookEntriesSkeleton } from './_components/skeleton'
+import { getMessageEntries } from '@/server/db/queries/message'
+import { MessageEntries } from './_components/entries'
+import { MessageForm } from './_components/form'
+import { MessageEntriesSkeleton } from './_components/skeleton'
 
-async function GuestbookEntriesSection() {
+async function MessageEntriesSection() {
   const session = await getSession()
   const currentUserId = session?.user.id ?? null
   const isAdmin = session?.user.role === 'admin'
-  const entries = await getGuestbookEntries(currentUserId)
+  const entries = await getMessageEntries(currentUserId)
 
   return (
     <ViewAnimation
@@ -29,7 +29,7 @@ async function GuestbookEntriesSection() {
       initial={{ opacity: 0, translateY: 6 }}
       whileInView={{ opacity: 1, translateY: 0 }}
     >
-      <GuestbookEntries
+      <MessageEntries
         currentUserId={currentUserId}
         entries={entries}
         isAdmin={isAdmin}
@@ -39,14 +39,14 @@ async function GuestbookEntriesSection() {
   )
 }
 
-export default function GuestbookPage() {
+export default function MessagePage() {
   return (
     <Wrapper>
       <SplitSection>
         <SplitSectionSidebar className='px-6 py-14'>
           <SplitSectionHeader
-            description='Share a quick hello, a thought about the work, or a suggestion.'
-            title='Guestbook'
+            description='Please be respectful and considerate when leaving messages. Inappropriate content will be removed.'
+            title='Message'
           />
         </SplitSectionSidebar>
 
@@ -60,7 +60,7 @@ export default function GuestbookPage() {
             initial={{ opacity: 0, translateY: -6 }}
             whileInView={{ opacity: 1, translateY: 0 }}
           >
-            <GuestbookForm />
+            <MessageForm />
           </ViewAnimation>
         </SplitSectionContent>
       </SplitSection>
@@ -74,14 +74,14 @@ export default function GuestbookPage() {
         </ViewAnimation>
       </Section>
       <Section>
-        <Suspense fallback={<GuestbookEntriesSkeleton />}>
-          <GuestbookEntriesSection />
+        <Suspense fallback={<MessageEntriesSkeleton />}>
+          <MessageEntriesSection />
         </Suspense>
       </Section>
       <WebPageJsonLd
-        description='Leave a note and react to messages from other visitors.'
-        path='/guestbook'
-        title='Guestbook'
+        description='Leave a message and react to messages from other visitors.'
+        path='/message'
+        title='Message'
       />
     </Wrapper>
   )
@@ -89,13 +89,13 @@ export default function GuestbookPage() {
 
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadata({
-    title: 'Guestbook',
-    description: 'Leave a note and react to messages from other visitors.',
+    title: 'Message',
+    description: 'Leave a message and react to messages from other visitors.',
     openGraph: {
-      url: '/guestbook',
+      url: '/message',
     },
     alternates: {
-      canonical: '/guestbook',
+      canonical: '/message',
     },
   })
 }

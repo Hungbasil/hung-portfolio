@@ -35,7 +35,7 @@ export const DeleteEntryModal = ({
         <DialogHeader>
           <DialogTitle>Delete entry?</DialogTitle>
           <DialogDescription>
-            This will remove {name}'s guestbook entry permanently.
+            This will remove {name}'s message permanently.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

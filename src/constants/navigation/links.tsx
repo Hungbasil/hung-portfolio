@@ -16,8 +16,8 @@ export const linkItems: LinkItemType[] = [
   },
   {
     icon: <Icons.messageSquare />,
-    text: 'Guestbook',
-    url: '/guestbook',
+    text: 'Message',
+    url: '/message',
     active: 'url',
   },
   {

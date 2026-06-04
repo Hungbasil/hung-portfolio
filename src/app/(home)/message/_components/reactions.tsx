@@ -18,17 +18,17 @@ import {
 } from '@/components/ui/popover'
 import { error, pop } from '@/lib/audio/minimal'
 import { cn } from '@/lib/utils'
-import type { GuestbookReactionItem } from '@/lib/validators/guestbook'
-import { toggleGuestbookReaction } from '../actions/guestbook'
+import type { MessageReactionItem } from '@/lib/validators'
+import { toggleMessageReaction } from '../actions/message'
 
-interface GuestbookReactionsProps {
+interface MessageReactionsProps {
   canReact: boolean
   entryId: number
-  reactions: GuestbookReactionItem[]
+  reactions: MessageReactionItem[]
 }
 
 interface OptimisticState {
-  reactions: GuestbookReactionItem[]
+  reactions: MessageReactionItem[]
 }
 
 const updateOptimisticReactions = (
@@ -71,17 +71,17 @@ const updateOptimisticReactions = (
   return { reactions: updated }
 }
 
-export const GuestbookReactions = ({
+export const MessageReactions = ({
   entryId,
   reactions,
   canReact,
-}: GuestbookReactionsProps) => {
+}: MessageReactionsProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const playError = useSound(error)
   const playReaction = useSound(pop)
 
   const { execute, optimisticState, status } = useOptimisticAction(
-    toggleGuestbookReaction,
+    toggleMessageReaction,
     {
       currentState: { reactions },
       updateFn: updateOptimisticReactions,
@@ -102,7 +102,7 @@ export const GuestbookReactions = ({
   return (
     <div className='space-y-2'>
       <div className='flex flex-wrap gap-2'>
-        {optimisticReactions.map((reaction: GuestbookReactionItem) => (
+        {optimisticReactions.map((reaction: MessageReactionItem) => (
           <Button
             className={cn(
               'gap-2 px-3 text-xs',

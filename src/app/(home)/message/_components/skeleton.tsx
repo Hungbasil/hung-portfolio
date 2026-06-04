@@ -1,9 +1,9 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { ViewAnimation } from '@/components/view-animation'
 
-const guestbookSkeletonItems = ['first', 'second', 'third', 'fourth']
+const messageSkeletonItems = ['first', 'second', 'third', 'fourth']
 
-export function GuestbookEntriesSkeleton() {
+export function MessageEntriesSkeleton() {
   return (
     <ViewAnimation
       delay={0.15}
@@ -11,7 +11,7 @@ export function GuestbookEntriesSkeleton() {
       whileInView={{ opacity: 1, translateY: 0 }}
     >
       <div className='h-[32rem] w-full divide-y divide-dashed divide-border overflow-hidden'>
-        {guestbookSkeletonItems.map((item) => (
+        {messageSkeletonItems.map((item) => (
           <div className='relative grid gap-4 bg-card/50 px-6 py-6' key={item}>
             <div className='flex items-start justify-between gap-3'>
               <div className='space-y-2'>

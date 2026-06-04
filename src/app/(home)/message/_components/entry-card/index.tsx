@@ -10,40 +10,37 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
+import { MessageEditSchema, type MessageEntryItem } from '@/lib/validators'
 import {
-  type GuestbookEntryItem,
-  GuestbookEntrySchema,
-} from '@/lib/validators/guestbook'
-import {
-  banGuestbookUser,
-  editGuestbookEntry,
-  removeGuestbookEntry,
-} from '../../actions/guestbook'
-import { GuestbookReactions } from '../reactions'
+  banMessageUser,
+  editMessageEntry,
+  removeMessageEntry,
+} from '../../actions/message'
+import { MessageReactions } from '../reactions'
 import { EntryCardActions } from './actions'
 import { BanUserModal } from './ban-user-modal'
 import { DeleteEntryModal } from './delete-entry-modal'
 
-interface GuestbookEntryCardProps {
+interface MessageEntryCardProps {
   currentUserId: string | null
-  entry: GuestbookEntryItem
+  entry: MessageEntryItem
   isAdmin: boolean
   isSignedIn: boolean
 }
 
-export const GuestbookEntryCard = ({
+export const MessageEntryCard = ({
   entry,
   currentUserId,
   isAdmin,
   isSignedIn,
-}: GuestbookEntryCardProps) => {
+}: MessageEntryCardProps) => {
   const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
   const [draftMessage, setDraftMessage] = useState(entry.message)
   const [isBanModalOpen, setIsBanModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
-  const editAction = useAction(editGuestbookEntry, {
+  const editAction = useAction(editMessageEntry, {
     onError: ({ error }) => {
       toast.error(
         typeof error.serverError === 'string'
@@ -54,10 +51,10 @@ export const GuestbookEntryCard = ({
     onSuccess: () => {
       setIsEditing(false)
       router.refresh()
-      toast.success('Guestbook entry updated.')
+      toast.success('Message updated.')
     },
   })
-  const deleteAction = useAction(removeGuestbookEntry, {
+  const deleteAction = useAction(removeMessageEntry, {
     onError: ({ error }) => {
       toast.error(
         typeof error.serverError === 'string'
@@ -69,10 +66,10 @@ export const GuestbookEntryCard = ({
       setIsEditing(false)
       setIsDeleteModalOpen(false)
       router.refresh()
-      toast.success('Guestbook entry deleted.')
+      toast.success('Message deleted.')
     },
   })
-  const banAction = useAction(banGuestbookUser, {
+  const banAction = useAction(banMessageUser, {
     onError: ({ error }) => {
       toast.error(
         typeof error.serverError === 'string'
@@ -117,7 +114,7 @@ export const GuestbookEntryCard = ({
     const disabled =
       trimmedMessage.length === 0 || trimmedMessage === originalMessage
 
-    const validation = GuestbookEntrySchema.safeParse({
+    const validation = MessageEditSchema.safeParse({
       message: trimmedMessage,
     })
 
@@ -226,7 +223,7 @@ export const GuestbookEntryCard = ({
       )}
       <div className='flex w-full flex-wrap items-end justify-between gap-4 empty:hidden'>
         {isEditing ? null : (
-          <GuestbookReactions
+          <MessageReactions
             canReact={isSignedIn}
             entryId={entry.id}
             reactions={entry.reactions}

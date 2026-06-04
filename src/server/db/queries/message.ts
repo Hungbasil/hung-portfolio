@@ -1,29 +1,29 @@
 import { and, desc, eq, sql } from 'drizzle-orm'
 import { unstable_cache } from 'next/cache'
 
-import type { GuestbookEntryItem } from '@/lib/validators/guestbook'
+import type { MessageEntryItem } from '@/lib/validators/message'
 import { db } from '@/server/db'
-import { guestbookEntries, guestbookReactions, users } from '@/server/db/schema'
+import { messageEntries, messageReactions, users } from '@/server/db/schema'
 
-const fetchGuestbookEntries = async (
+const fetchMessageEntries = async (
   currentUserId?: string | null
-): Promise<GuestbookEntryItem[]> => {
+): Promise<MessageEntryItem[]> => {
   // Fetch entries first
   const entries = await db
     .select({
-      id: guestbookEntries.id,
-      name: guestbookEntries.name,
-      message: guestbookEntries.message,
-      signature: guestbookEntries.signature,
-      userId: guestbookEntries.userId,
+      id: messageEntries.id,
+      name: messageEntries.name,
+      message: messageEntries.message,
+      signature: messageEntries.signature,
+      userId: messageEntries.userId,
       role: users.role,
       banned: users.banned,
-      createdAt: guestbookEntries.createdAt,
-      editedAt: guestbookEntries.editedAt,
+      createdAt: messageEntries.createdAt,
+      editedAt: messageEntries.editedAt,
     })
-    .from(guestbookEntries)
-    .innerJoin(users, eq(users.id, guestbookEntries.userId))
-    .orderBy(desc(guestbookEntries.createdAt))
+    .from(messageEntries)
+    .innerJoin(users, eq(users.id, messageEntries.userId))
+    .orderBy(desc(messageEntries.createdAt))
 
   if (entries.length === 0) {
     return []
@@ -32,15 +32,15 @@ const fetchGuestbookEntries = async (
   // Fetch all reactions
   const allReactions = await db
     .select({
-      entryId: guestbookReactions.entryId,
-      emoji: guestbookReactions.emoji,
+      entryId: messageReactions.entryId,
+      emoji: messageReactions.emoji,
       count: sql<number>`count(*)`.mapWith(Number),
       reacted: currentUserId
-        ? sql<boolean>`max(case when ${guestbookReactions.userId} = ${currentUserId} then true else false end)`
+        ? sql<boolean>`max(case when ${messageReactions.userId} = ${currentUserId} then true else false end)`
         : sql<boolean>`false`,
     })
-    .from(guestbookReactions)
-    .groupBy(guestbookReactions.entryId, guestbookReactions.emoji)
+    .from(messageReactions)
+    .groupBy(messageReactions.entryId, messageReactions.emoji)
 
   // Group reactions by entry ID
   const reactionsMap = new Map<number, typeof allReactions>()
@@ -69,33 +69,30 @@ const fetchGuestbookEntries = async (
   }))
 }
 
-export const getGuestbookEntries = (currentUserId?: string | null) =>
+export const getMessageEntries = (currentUserId?: string | null) =>
   unstable_cache(
-    () => fetchGuestbookEntries(currentUserId),
-    ['guestbook', currentUserId ?? 'anonymous'],
+    () => fetchMessageEntries(currentUserId),
+    ['message', currentUserId ?? 'anonymous'],
     {
-      tags: ['guestbook'],
+      tags: ['message'],
     }
   )()
 
-export const deleteGuestbookEntry = async (
+export const deleteMessageEntry = async (
   entryId: number,
   userId: string,
   isAdmin = false
 ) => {
   const deleted = await db
-    .delete(guestbookEntries)
+    .delete(messageEntries)
     .where(
       isAdmin
-        ? eq(guestbookEntries.id, entryId)
-        : and(
-            eq(guestbookEntries.id, entryId),
-            eq(guestbookEntries.userId, userId)
-          )
+        ? eq(messageEntries.id, entryId)
+        : and(eq(messageEntries.id, entryId), eq(messageEntries.userId, userId))
     )
     .returning({
-      id: guestbookEntries.id,
-      signature: guestbookEntries.signature,
+      id: messageEntries.id,
+      signature: messageEntries.signature,
     })
 
   return deleted.length > 0 ? deleted[0] : null

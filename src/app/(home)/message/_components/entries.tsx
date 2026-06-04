@@ -3,22 +3,22 @@
 import { Icons } from '@/components/icons/icons'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ViewAnimation } from '@/components/view-animation'
-import type { GuestbookEntryItem } from '@/lib/validators/guestbook'
-import { GuestbookEntryCard } from './entry-card'
+import type { MessageEntryItem } from '@/lib/validators'
+import { MessageEntryCard } from './entry-card'
 
-interface GuestbookEntriesProps {
+interface MessageEntriesProps {
   currentUserId: string | null
-  entries: GuestbookEntryItem[]
+  entries: MessageEntryItem[]
   isAdmin: boolean
   isSignedIn: boolean
 }
 
-export const GuestbookEntries = ({
+export const MessageEntries = ({
   currentUserId,
   entries,
   isAdmin,
   isSignedIn,
-}: GuestbookEntriesProps) => {
+}: MessageEntriesProps) => {
   if (entries.length === 0) {
     return (
       <ScrollArea className='h-[32rem] w-full' data-lenis-prevent>
@@ -40,7 +40,7 @@ export const GuestbookEntries = ({
             key={entry.id}
             whileInView={{ opacity: 1, translateY: 0 }}
           >
-            <GuestbookEntryCard
+            <MessageEntryCard
               currentUserId={currentUserId}
               entry={entry}
               isAdmin={isAdmin}

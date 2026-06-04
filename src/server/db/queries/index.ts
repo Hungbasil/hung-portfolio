@@ -1,1 +1,1 @@
-export * from './guestbook'
+export * from './message'
