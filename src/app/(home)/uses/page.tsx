@@ -11,12 +11,11 @@ import { createMetadata } from '@/lib/metadata'
 import { Coding } from './_components/coding'
 import { HardwareGrid } from './_components/hardware'
 import Hero from './_components/hero'
-import { Setup } from './_components/setup'
 import { SoftwareGrid } from './_components/software'
 
 const title = 'Uses'
 const description =
-  'The hardware, software, and tools that power my daily workflow.'
+  'A curated list of the tools I use for work and personal projects.'
 
 export function generateMetadata(): Metadata {
   return createMetadata({
@@ -29,9 +28,6 @@ export function generateMetadata(): Metadata {
 
 export default function UsesPage() {
   const sections: Array<{ title?: string | null; content: ReactNode }> = [
-    {
-      content: <Setup />,
-    },
     {
       title: 'Hardware',
       content: <HardwareGrid items={hardware} />,
