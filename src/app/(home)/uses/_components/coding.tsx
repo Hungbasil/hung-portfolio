@@ -41,16 +41,7 @@ export function Coding() {
           >
             JetBrains Mono
           </a>{' '}
-          font with ligatures enabled. If you want the config, it lives{' '}
-          <a
-            className='font-medium text-primary hover:underline'
-            href='https://github.com/techwithanirudh/dotfiles/blob/main/editors/vscode/settings.json'
-            rel='noopener noreferrer'
-            target='_blank'
-          >
-            here
-          </a>
-          .
+          font with ligatures enabled.
         </p>
       </div>
 
@@ -61,7 +52,7 @@ export function Coding() {
             className='h-full w-full dark:hidden'
             height={720}
             imageClassName='h-full w-full object-cover'
-            src='/images/uses/vscode-light.png'
+            src='/images/uses/light.png'
             width={1280}
           />
           <BlurImage
@@ -69,12 +60,12 @@ export function Coding() {
             className='hidden h-full w-full dark:block'
             height={720}
             imageClassName='h-full w-full object-cover'
-            src='/images/uses/vscode-dark.png'
+            src='/images/uses/dark.png'
             width={1280}
           />
         </div>
         <figcaption className='p-4 text-center text-muted-foreground text-sm'>
-          My VS Code configuration
+          My VS Code
         </figcaption>
       </figure>
     </div>
