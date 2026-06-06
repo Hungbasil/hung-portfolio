@@ -21,10 +21,10 @@ export const socials: Social[] = [
     description: 'Follow me on Facebook',
   },
   {
-    name: 'TikTok',
-    description: 'Follow for tech content and project updates',
-    url: 'https://www.tiktok.com/@hungbasic_1?lang=en',
-    icon: <Icons.post />,
+    name: 'Zalo',
+    description: 'Get in touch via Zalo',
+    url: 'https://zalo.me/hungbasil',
+    icon: <Icons.zalo />,
   },
   {
     icon: <Icons.mail />,
