@@ -28,15 +28,13 @@ export const contact = actionClient
 
       return {
         success: true,
-        message: "Your message has been sent! We'll get back to you soon.",
+        message: "Your message has been sent! I'll get in touch soon.",
       }
     } catch (error) {
       console.error('Contact form error:', error)
       if (error instanceof ActionError) {
         throw error
       }
-      throw new ActionError(
-        'Failed to send your message. Please try again later.'
-      )
+      throw new ActionError('Failed to send your message. Please try again.')
     }
   })

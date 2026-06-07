@@ -121,6 +121,7 @@ import {
   V0Icon,
   XIcon,
   YouTubeIcon,
+  ZaloIcon,
 } from './brands'
 import type { IconProps, SvgIcon } from './utils'
 import { getSvgSizeProps } from './utils'
@@ -280,4 +281,5 @@ export const Icons = {
   scira: SciraIcon,
   markdown: MarkdownIcon,
   v0: V0Icon,
+  zalo: ZaloIcon,
 }

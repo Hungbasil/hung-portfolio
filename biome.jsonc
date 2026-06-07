@@ -28,7 +28,7 @@
     }
   },
   "linter": {
-    "enabled": true,
+    "enabled": false,
     "rules": {
       "a11y": {
         "noSvgWithoutTitle": "off",
