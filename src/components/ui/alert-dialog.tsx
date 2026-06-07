@@ -55,7 +55,18 @@ function AlertDialogContent({
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Content
         className={cn(
-          'group/alert-dialog-content data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-6 rounded-xl bg-popover p-6 text-popover-foreground outline-none ring-1 ring-foreground/10 duration-100 data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-closed:animate-out data-open:animate-in data-[size=default]:sm:max-w-lg',
+          'group/alert-dialog-content',
+          'fixed left-[50%] top-[50%] z-50 grid -translate-x-1/2 -translate-y-1/2',
+
+          'w-[calc(100vw-2rem)] max-w-lg sm:w-full',
+          'max-h-[calc(100dvh-2rem)] overflow-x-hidden overflow-y-auto',
+
+          'gap-4 p-4 sm:gap-6 sm:p-6',
+          'rounded-xl bg-popover text-popover-foreground shadow-lg outline-none ring-1 ring-foreground/10',
+        
+          'duration-200 data-open:animate-in data-closed:animate-out data-open:fade-in-0 data-closed:fade-out-0 data-open:zoom-in-95 data-closed:zoom-out-95 data-open:slide-in-from-left-1/2 data-open:slide-in-from-top-1/2 data-closed:slide-out-to-left-1/2 data-closed:slide-out-to-top-1/2',
+
+          'sm:data-[size=default]:max-w-lg sm:data-[size=sm]:max-w-sm sm:max-h-[calc(100vh-4rem)]',
           className
         )}
         data-size={size}
