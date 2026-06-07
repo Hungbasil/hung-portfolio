@@ -56,13 +56,6 @@ export const Links = () => {
       items: [
         { href: '/uses', children: 'Uses' },
         { href: '/colophon', children: 'Colophon' },
-        {
-          href: 'https://v1.techwithanirudh.com/',
-          children: 'V1 Portfolio',
-          external: true,
-        },
-        { href: '/rss.xml', children: 'RSS Feed' },
-        { href: '/sitemap.xml', children: 'Sitemap' },
       ],
     },
     {
