@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { useSelectionContextMenu } from './hooks/use-selection-context-menu'
 
 export const SelectionContextMenu = ({
-  label = 'Ask Simba',
+  label = 'Ask Pochita',
   onSelect,
 }: {
   label?: string

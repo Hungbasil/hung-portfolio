@@ -17,22 +17,22 @@ const faq = [
   {
     question: 'What technologies do you specialize in?',
     answer:
-      'I focus on full-stack web development with Next.js, TypeScript, tRPC, Drizzle, and PostgreSQL.',
+      'I focus on full-stack web development with Node.js, TypeScript, Java and PostgreSQL.',
   },
   {
     question: 'What are you focusing on right now?',
     answer:
-      "I'm focused on shipping personal products, polishing this portfolio, and learning more about scalable web app architecture.",
+      "I'm focused on improving my skills and learning more about scalable web app architecture.",
   },
   {
     question: 'How can I get in touch with you?',
     answer:
-      'The best way to reach me is through the contact form on this website or via email at hello@techwithanirudh.com. You can also connect with me on GitHub or LinkedIn.',
+      'The best way to reach me is through the contact form on this website or email me at k.hung090804@gmail.com, or you can also connect with me on GitHub or LinkedIn.',
   },
   {
     question: "What's your development approach?",
     answer:
-      "I try to keep things simple, readable, and easy to maintain. I focus on user experience, write clear code, and document what matters. I'm always learning and like shipping small improvements often.",
+      'I try to keep things simple, readable, and easy to maintain. I focus on user experience, write clear code, and document what matters.',
   },
 ]
 
@@ -45,7 +45,7 @@ export const FAQ = () => (
           <>
             Still have questions?{' '}
             <InlineLink className='no-underline' href='/contact'>
-              Contact Me
+              DM Me
             </InlineLink>
           </>
         }

@@ -38,7 +38,7 @@ const ContactFormInner = () => {
           toast.success(
             data?.success && data.message
               ? data.message
-              : "Your message has been sent! We'll get back to you soon."
+              : "Your message has been sent! I'll get in touch soon."
           )
         },
       },
@@ -66,7 +66,7 @@ const ContactFormInner = () => {
               <FormControl>
                 <Input
                   className='bg-background'
-                  placeholder='Jane Smith'
+                  placeholder='Your name'
                   {...field}
                   disabled={action.status === 'executing'}
                 />
@@ -75,7 +75,7 @@ const ContactFormInner = () => {
                 <FormMessage />
               ) : (
                 <FormDescription>
-                  Your full name, so I know who I'm talking to.
+                  Please fill in Your full name.
                 </FormDescription>
               )}
             </FormItem>
@@ -90,7 +90,7 @@ const ContactFormInner = () => {
               <FormControl>
                 <Input
                   className='bg-background'
-                  placeholder='jane@acme.com'
+                  placeholder='your.email@example.com'
                   {...field}
                   disabled={action.status === 'executing'}
                 />
@@ -99,7 +99,7 @@ const ContactFormInner = () => {
                 <FormMessage />
               ) : (
                 <FormDescription>
-                  I will never share your email with anyone else.
+                  Please provide a valid email address.
                 </FormDescription>
               )}
             </FormItem>
@@ -114,7 +114,7 @@ const ContactFormInner = () => {
               <FormControl>
                 <Textarea
                   className='max-h-[20rem] min-h-[10rem] resize-y bg-background'
-                  placeholder="Hi there, I'm interested in..."
+                  placeholder='Write down your message here...'
                   {...field}
                   disabled={action.status === 'executing'}
                 />
@@ -122,9 +122,7 @@ const ContactFormInner = () => {
               {form.formState.errors.message ? (
                 <FormMessage />
               ) : (
-                <FormDescription>
-                  Please include at least 30 characters.
-                </FormDescription>
+                <FormDescription>Feel free to ask me anything!</FormDescription>
               )}
             </FormItem>
           )}
@@ -153,7 +151,7 @@ const ContactFormInner = () => {
             <AlertTitle className='mb-0 leading-normal'>
               {action.result.data?.success && action.result.data?.message
                 ? action.result.data.message
-                : "Your message has been sent! We'll get back to you soon."}
+                : "Your message has been sent! I'll get in touch soon."}
             </AlertTitle>
           </Alert>
         )}

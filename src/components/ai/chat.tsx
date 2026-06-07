@@ -33,7 +33,7 @@ import {
   AIContactFormSkeleton,
 } from '@/components/ai/tools/contact-form'
 import { ClippyProvider, useClippy } from '@/components/clippy'
-import { Rover } from '@/components/clippy/agents/rover'
+import { Pochita } from '@/components/clippy/agents/pochita'
 import { playSubmitAnimation, useClippyPanel } from '@/components/clippy/hooks'
 import { Icons } from '@/components/icons/icons'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -99,7 +99,7 @@ export function AISearch({ children }: { children: ReactNode }) {
   })
 
   return (
-    <ClippyProvider agent={isMobile ? undefined : Rover}>
+    <ClippyProvider agent={isMobile ? undefined : Pochita}>
       <AISearchContext
         value={useMemo(
           () => ({
@@ -128,7 +128,7 @@ function Header() {
       <div className='flex min-h-full flex-1 items-center justify-between rounded-none bg-fd-card px-3 py-2 text-fd-card-foreground'>
         <div className='flex items-center gap-2'>
           <Icons.pawPrint className='size-4 text-fd-primary transition-transform duration-200 hover:-rotate-45' />
-          <p className='font-medium text-sm'>Ask Simba</p>
+          <p className='font-medium text-sm'>Ask Pochita</p>
         </div>
       </div>
 
@@ -306,7 +306,7 @@ function SearchAIInput(props: ComponentProps<'form'>) {
               onStart(event)
             }
           }}
-          placeholder={isLoading ? 'Sniffing for answers...' : 'Ask Simba'}
+          placeholder={isLoading ? 'Hunting for answers...' : 'Ask Pochita'}
           value={input}
         />
       </div>
@@ -462,8 +462,8 @@ function MessageList({
           <div className='flex min-h-full flex-1 flex-col items-center justify-center gap-3 text-center text-fd-muted-foreground text-sm'>
             <Icons.pawPrint className='size-8 text-fd-primary transition-transform hover:-rotate-45 hover:scale-125' />
             <p>
-              heya! im simba, anirudh's dog. i can answer questions about him,
-              his work, or the site.
+              Hello! I'm pochita, a cat, and I can answer questions about my
+              Boss.
             </p>
           </div>
         ) : (
