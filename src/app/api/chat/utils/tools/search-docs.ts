@@ -2,7 +2,7 @@ import { tool, type UIMessageStreamWriter } from 'ai'
 import { Document } from 'flexsearch'
 import { z } from 'zod'
 import type { CustomDocument } from '@/app/api/chat/types'
-import { post as blogSource, workSource } from '@/lib/source'
+import { workSource } from '@/lib/source'
 
 const searchServer = createSearchServer()
 
@@ -15,22 +15,6 @@ async function createSearchServer() {
       tag: ['tag'],
     },
   })
-
-  const blog = await chunkedAll(
-    blogSource.getPages().map(async (page) => {
-      if (!('getText' in page.data)) {
-        return null
-      }
-
-      return {
-        content: await page.data.getText('processed'),
-        description: page.data.description ?? '',
-        tag: 'blog',
-        title: page.data.title ?? 'Untitled',
-        url: page.url,
-      } as CustomDocument
-    })
-  )
 
   const work = await chunkedAll(
     workSource.getPages().map(async (page) => {
@@ -47,12 +31,6 @@ async function createSearchServer() {
       } as CustomDocument
     })
   )
-
-  for (const post of blog) {
-    if (post) {
-      search.add(post)
-    }
-  }
 
   for (const page of work) {
     if (page) {
