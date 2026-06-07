@@ -1,8 +1,7 @@
 import { description, title } from '@/constants/site'
-import { getSortedByDatePosts, getSortedByDateWork } from '@/lib/source'
+import { getSortedByDateWork } from '@/lib/source'
 import { url } from '@/lib/url'
 
-const allPosts = getSortedByDatePosts()
 const allWork = getSortedByDateWork()
 
 const content = `# ${title}
@@ -22,10 +21,6 @@ const content = `# ${title}
 ## Work
 
 ${allWork.map((item) => `- [${item.data.title}](${url(['work.mdx', ...item.slugs])}): ${item.data.description ?? 'Project showcase'}`).join('\n')}
-
-## Blog
-
-${allPosts.map((item) => `- [${item.data.title}](${url(['blog.mdx', ...item.slugs])}): ${item.data.description ?? ''}`).join('\n')}
 `
 
 export const dynamic = 'force-static'

@@ -71,9 +71,7 @@ export default function MdxLayout({
 
       <SectionBody>
         <article className='flex min-h-full flex-col lg:flex-row'>
-          <MdxContent comments={comments} slug={slug} toc={toc}>
-            {children}
-          </MdxContent>
+          <MdxContent toc={toc}>{children}</MdxContent>
         </article>
       </SectionBody>
     </>

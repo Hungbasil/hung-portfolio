@@ -3,7 +3,6 @@ import { baseUrl } from '@/constants'
 import { env } from '@/env'
 import { retryWithBackoff } from '@/lib/retry'
 import NewsletterWelcomeEmail from '../../emails/newsletter-welcome'
-import type { getPosts } from './source'
 
 const resend = new Resend(env.RESEND_API_KEY)
 
@@ -51,11 +50,14 @@ export async function getContact({
 }
 
 export async function sendWelcomeEmail({
-  posts,
+  posts = [],
   firstName,
   to,
 }: {
-  posts: ReturnType<typeof getPosts>
+  posts?: Array<{
+    data: { image?: string; title?: string; description?: string }
+    url: string
+  }>
   firstName: string
   to: string
 }) {
@@ -65,11 +67,14 @@ export async function sendWelcomeEmail({
     throw new Error('Missing required email fields')
   }
 
-  const formattedPosts = posts.map((post) => ({
-    ...post.data,
-    image: `${baseUrl}${post.data.image}`,
-    url: `${baseUrl}${post.url}`,
-  }))
+  const formattedPosts = posts
+    .filter((post) => post.data.title)
+    .map((post) => ({
+      title: post.data.title!,
+      description: post.data.description,
+      image: post.data.image ? `${baseUrl}${post.data.image}` : undefined,
+      url: `${baseUrl}${post.url}`,
+    }))
 
   try {
     await retryWithBackoff(

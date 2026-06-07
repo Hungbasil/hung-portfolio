@@ -1,11 +1,6 @@
 import { owner, title } from '@/constants/site'
-import { getBlogLLMText, getWorkLLMText } from '@/lib/get-llm-text'
-import {
-  getSortedByDatePosts,
-  getSortedByDateWork,
-  post,
-  workSource,
-} from '@/lib/source'
+import { getWorkLLMText } from '@/lib/get-llm-text'
+import { getSortedByDateWork, workSource } from '@/lib/source'
 import {
   getAboutText,
   getColophonText,
@@ -17,7 +12,6 @@ import {
 import { getCommitHistoryText } from '../utils/github-commits'
 
 async function getFullText() {
-  const allPosts = getSortedByDatePosts()
   const allWork = getSortedByDateWork()
 
   const workContent = await Promise.all(
@@ -32,21 +26,9 @@ async function getFullText() {
     })
   )
 
-  const blogContent = await Promise.all(
-    allPosts.map(async (item) => {
-      const page = post.getPage(item.slugs)
-      if (!page) {
-        return ''
-      }
-
-      const content = await getBlogLLMText(page, { level: 'section' })
-      return content
-    })
-  )
-
   const commitHistory = await getCommitHistoryText()
 
-  return `<SYSTEM>This document contains comprehensive information about ${owner}'s professional profile, portfolio, and blog content. It includes personal details, work experience, technical skills, projects, testimonials, and all published blog posts and work projects. This data is formatted for consumption by Large Language Models (LLMs) to provide accurate and up-to-date information about ${owner}'s background, skills, and expertise.</SYSTEM>
+  return `<SYSTEM>This document contains comprehensive information about ${owner}'s professional profile and portfolio. It includes personal details, work experience, technical skills, projects, and testimonials. This data is formatted for consumption by Large Language Models (LLMs) to provide accurate and up-to-date information about ${owner}'s background, skills, and expertise.</SYSTEM>
 
 # ${title}
 
@@ -65,11 +47,7 @@ ${getColophonText()}
 
 ## Work
 
-${workContent.filter(Boolean).join('\n\n')}
-
-## Blog
-
-${blogContent.filter(Boolean).join('\n\n')}`
+${workContent.filter(Boolean).join('\n\n')}`
 }
 
 export const dynamic = 'force-dynamic'

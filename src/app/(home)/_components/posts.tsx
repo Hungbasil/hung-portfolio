@@ -3,8 +3,18 @@ import { PostCard } from '@/components/blog/post-card'
 import { SearchRedirectInput } from '@/components/search-redirect-input'
 import { Section } from '@/components/section'
 import { ViewAnimation } from '@/components/view-animation'
-import type { BlogPage } from '@/lib/source'
 import { cn } from '@/lib/utils'
+
+export type BlogPage = {
+  data: {
+    date: string | Date
+    author: string
+    description?: string
+    title: string
+  }
+  url: string
+  slugs: string[]
+}
 
 export default function Posts({
   posts,

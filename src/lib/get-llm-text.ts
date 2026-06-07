@@ -1,9 +1,9 @@
 import { format } from 'date-fns'
 import { owner, repo } from '@/constants/config'
-import type { BlogPage, WorkPage } from '@/lib/source'
+import type { WorkPage } from '@/lib/source'
 
-type ContentPage = BlogPage | WorkPage
-type ContentType = 'blog' | 'work'
+type ContentPage = WorkPage
+type ContentType = 'work'
 interface LLMTextOptions {
   level?: 'page' | 'section' | 'subsection'
 }
@@ -34,27 +34,14 @@ async function getLLMText(
   const processed = await page.data.getText('processed')
   const path = `content/${contentType}/${page.path}`
 
-  const tagsLine =
-    contentType === 'blog'
-      ? `Tags: ${(page as BlogPage).data.tags?.join(', ') ?? ''}\n`
-      : ''
-
   return `${getHeadingPrefix(level)} ${page.data.title}
 URL: ${page.url}
 Source: https://raw.githubusercontent.com/${owner}/${repo}/refs/heads/main/${path}
-${tagsLine}
 ${page.data.description ?? ''}
 
 ${processed}
 
 ${page.data.lastModified ? `Last updated on ${format(new Date(page.data.lastModified), 'MMMM d, yyyy')}` : ''}`
-}
-
-export async function getBlogLLMText(
-  page: BlogPage,
-  options: LLMTextOptions = {}
-) {
-  return await getLLMText(page, 'blog', options)
 }
 
 export async function getWorkLLMText(

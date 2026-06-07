@@ -4,10 +4,9 @@ import {
   scanURLs,
   validateFiles,
 } from 'next-validate-link'
-import { getPosts, getWorkPages, type WorkPage } from '@/lib/source'
+import { getWorkPages, type WorkPage } from '@/lib/source'
 
 async function checkLinks() {
-  const posts = getPosts()
   const workPages = getWorkPages()
 
   const scanned = await scanURLs({
@@ -28,23 +27,20 @@ async function checkLinks() {
   )
 
   printErrors(
-    await validateFiles(
-      [...(await getFiles(workPages)), ...(await getFiles(posts))],
-      {
-        scanned,
-        markdown: {
-          components: {
-            Card: { attributes: ['href'] },
-          },
+    await validateFiles([...(await getFiles(workPages))], {
+      scanned,
+      markdown: {
+        components: {
+          Card: { attributes: ['href'] },
         },
-        checkRelativePaths: 'as-url',
-      }
-    ),
+      },
+      checkRelativePaths: 'as-url',
+    }),
     true
   )
 }
 
-function getHeadings({ data }: BlogPage | WorkPage): string[] {
+function getHeadings({ data }: WorkPage): string[] {
   const { _exports, toc } = data
   const headings = toc?.map((item) => item.url.slice(1)) ?? []
   const elementIds = _exports?.elementIds
@@ -55,7 +51,7 @@ function getHeadings({ data }: BlogPage | WorkPage): string[] {
   return headings
 }
 
-async function getFiles(pages: BlogPage[] | WorkPage[]) {
+async function getFiles(pages: WorkPage[]) {
   const files: FileObject[] = []
   for (const page of pages) {
     files.push({

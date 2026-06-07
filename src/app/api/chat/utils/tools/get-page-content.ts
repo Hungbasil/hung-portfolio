@@ -1,6 +1,6 @@
 import { tool } from 'ai'
 import { z } from 'zod'
-import { post, workSource } from '@/lib/source'
+import { workSource } from '@/lib/source'
 
 const normalizePath = (path: string) =>
   path.startsWith('/') ? path.slice(1) : path
@@ -8,10 +8,6 @@ const normalizePath = (path: string) =>
 const resolvePage = (path: string) => {
   const normalized = normalizePath(path)
   const [section, ...slugs] = normalized.split('/').filter(Boolean)
-
-  if (section === 'blog') {
-    return post.getPage(slugs)
-  }
 
   if (section === 'work') {
     return workSource.getPage(slugs)
