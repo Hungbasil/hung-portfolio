@@ -21,11 +21,27 @@ export function FloatingPill({
       label: 'About',
     },
     { href: '/work', icon: <Icons.work className='size-4' />, label: 'Work' },
+    {
+      href: '/message',
+      icon: <Icons.mail className='size-4' />,
+      label: 'Message',
+    },
   ]
 
   return (
-    <div className='fixed inset-x-0 bottom-4 z-[32] flex justify-center sm:hidden'>
-      <div className='flex items-center gap-0.5 rounded-full border bg-background/80 px-1.5 py-1.5 shadow-lg backdrop-blur-md'>
+    <div
+      className='fixed inset-x-0 bottom-4 z-[9999] flex justify-center pointer-events-auto'
+      style={
+        {
+          position: 'fixed',
+          zIndex: 9999,
+          bottom: 16,
+          left: 0,
+          right: 0,
+        } as React.CSSProperties
+      }
+    >
+      <div className='flex items-center gap-0.5 rounded-full border bg-background/80 px-1.5 py-1.5 shadow-lg backdrop-blur-md pointer-events-auto'>
         <button
           aria-label='Search'
           className='flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground'

@@ -21,6 +21,28 @@
 @source "../../node_modules/fumadocs-ui/dist/**/*.js";
 @source "../../node_modules/@fuma-comment/react/dist/**/*.js";
 
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
 @theme {
   --color-background: var(--color-fd-background);
   --color-foreground: var(--color-fd-foreground);
@@ -76,6 +98,12 @@ html > body[data-scroll-locked] {
     --typography-hero-width: 56rem;
     --typography-title-width: 40rem;
     --typography-body-width: 60ch;
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 }
 

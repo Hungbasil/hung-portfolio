@@ -22,12 +22,18 @@ import { Button } from '@/components/ui/button'
 import { ViewAnimation } from '@/components/view-animation'
 import { WorkExperience } from '@/components/work-experience'
 import { experiences } from '@/constants/portfolio/experiences'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 export default function Experience(): React.ReactElement {
   const [showDialog, setShowDialog] = useState(false)
+  const isMobile = useIsMobile()
 
   const handleResumeClick = () => {
-    setShowDialog(true)
+    if (isMobile) {
+      window.open('/Nguyen_Khai_Hung_CV.pdf', '_blank')
+    } else {
+      setShowDialog(true)
+    }
   }
 
   const handleViewOnly = () => {
