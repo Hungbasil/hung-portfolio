@@ -29,9 +29,9 @@ export default async function Feed(): Promise<React.ReactElement | null> {
         <SplitSectionContent
           className={cn(
             'lg:col-span-2',
-            'relative flex max-w-full flex-col gap-2 overflow-x-auto font-mono text-muted-foreground text-xs',
+            'relative flex max-w-full flex-col gap-2 overflow-hidden font-mono text-muted-foreground text-xs',
             'lg:overflow-visible lg:text-sm',
-            'lg:px-8'
+            'px-4 py-6 lg:px-8'
           )}
           inset
         >

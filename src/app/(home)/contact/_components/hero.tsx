@@ -21,7 +21,7 @@ export const Hero = () => {
         description='Have a question or want to connect? Send a message and expect a response within a day!'
         title='Contact Me'
       />
-      <div className='mt-4 flex w-min flex-row gap-4 rounded-full bg-card p-1.5 text-card-foreground'>
+      <div className='mt-4 flex flex-row flex-wrap gap-4 rounded-full bg-card p-1.5 text-card-foreground sm:w-min'>
         {socials.map((social, index) => {
           const isZalo = social.name === 'Zalo'
 

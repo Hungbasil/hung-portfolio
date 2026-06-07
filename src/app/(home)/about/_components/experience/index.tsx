@@ -91,9 +91,14 @@ export default function Experience(): React.ReactElement {
               Do you want to view it directly or download it to your device?
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
+          <AlertDialogFooter className='gap-2 sm:gap-2'>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button onClick={handleViewOnly} size='sm' variant='outline'>
+            <Button
+              className='w-full sm:w-auto'
+              onClick={handleViewOnly}
+              size='sm'
+              variant='outline'
+            >
               View
             </Button>
             <AlertDialogAction onClick={handleDownload}>

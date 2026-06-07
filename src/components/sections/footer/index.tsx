@@ -9,9 +9,9 @@ import { Links } from './links'
 export const Footer = () => (
   <footer
     className={cn(
-      'container mx-auto flex flex-col gap-8 px-4 py-8 pb-24',
+      'container mx-auto flex flex-col gap-8 px-4 py-8 pb-20',
       'border-border border-t border-dashed',
-      'sm:gap-16 sm:px-8 sm:py-16'
+      'sm:gap-16 sm:px-8 sm:py-16 sm:pb-16'
     )}
   >
     <Links />
