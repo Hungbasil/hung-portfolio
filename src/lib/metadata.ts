@@ -8,25 +8,8 @@ export const baseUrl =
     ? new URL('http://localhost:3000')
     : new URL(env.NEXT_PUBLIC_BASE_URL)
 
-export function getSimpleOgImage(
-  ogTitle: string,
-  description?: string
-): string {
-  const params = new URLSearchParams({ title: ogTitle })
-  if (description) {
-    params.set('description', description)
-  }
-  return `/og?${params}`
-}
-
 export function createMetadata(override: Metadata): Metadata {
-  const ogTitle =
-    typeof override.title === 'string' ? override.title : undefined
-  const ogDesc =
-    typeof override.description === 'string' ? override.description : undefined
-  const defaultImage = ogTitle
-    ? getSimpleOgImage(ogTitle, ogDesc)
-    : '/banner.png'
+  const defaultImage = '/images/og-banner.png'
 
   return {
     ...override,
