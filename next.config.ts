@@ -11,7 +11,11 @@ async function createNextConfig(): Promise<NextConfig> {
   await jiti.import('./src/env')
 
   const nextConfig: NextConfig = {
-    transpilePackages: ['@radix-ui/react-slot', '@radix-ui/react-hover-card', 'vidstack'],
+    transpilePackages: [
+      '@radix-ui/react-slot',
+      '@radix-ui/react-hover-card',
+      'vidstack',
+    ],
     allowedDevOrigins: ['3000--main--portfolio-com'],
     reactStrictMode: true,
     poweredByHeader: false,
